@@ -20,8 +20,16 @@ public class EmpresaController {
 
     @PostMapping
     public ResponseEntity postEmpresa(@RequestBody Empresa empresa){
-               String retorn = empresaService.salvaEmpresa(empresa);
-        return ResponseEntity.ok().body(retorn);
+               String retorn = empresaService.saveEmpresa(empresa);
+                if(retorn==null){
+                    return ResponseEntity.badRequest().body("Cep informado não existe" +
+                            "\nE a empresa não foi salva");
+                }
+                if (retorn.equals("Cnpj existente")){
+                    return ResponseEntity.badRequest().body("Cnpj já cadastrado em outra Empresa" +
+                            "\nE a empresa não foi salva");
+                }
+               return ResponseEntity.ok().body(retorn);
     }
     @GetMapping
     public List<EmpresaDTO> getAll(){
@@ -41,9 +49,25 @@ public class EmpresaController {
         }
     }
     @PutMapping("/{id}")
-    public EmpresaDTO updateEmpresa(@RequestBody Empresa empresa,@PathVariable Long id){
+    public ResponseEntity updateEmpresa(@RequestBody Empresa empresa,@PathVariable Long id){
         EmpresaDTO empresa2 = new EmpresaDTO(empresaService.updateEm(empresa,id));
-        return empresa2;
+        if(empresa2==null){
+            return ResponseEntity.badRequest().body("Empresa não encontrada");
+        }else {
+            return ResponseEntity.ok().body(empresa2);
+        }
+
+
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteEmpresa(@PathVariable Long id){
+        String nome = empresaService.deleteEm(id);
+        if (nome==null){
+            return ResponseEntity.badRequest().body("Empresa não encontrada");
+        }else {
+            return ResponseEntity.ok().body("Empresa ".concat(nome).concat(" deletada"));
+
+        }
     }
 
 }

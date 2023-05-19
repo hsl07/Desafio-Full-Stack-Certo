@@ -6,10 +6,10 @@ import jakarta.persistence.*;
 public class Fornecedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_empresa")
+    @Column(name = "id_Fornecedor")
     private long id;
-    @Column(name = "cnpj_cpf", nullable = false)
-    private String cnpjEcpf;
+    @Column(name = "cnpj", nullable = false)
+    private String cnpj;
     @Column(name = "nomeF", nullable = false)
     private String nome;
     @Column(name = "email", nullable = false)
@@ -20,7 +20,7 @@ public class Fornecedor {
     public Fornecedor(){}
 
     public Fornecedor(String cnpjEcpf, String nome, String email, String cep) {
-        this.cnpjEcpf = cnpjEcpf;
+        this.cnpj = cnpj;
         this.nome = nome;
         this.email = email;
         this.cep = cep;
@@ -32,11 +32,11 @@ public class Fornecedor {
 
 
     public String getCnpjEcpf() {
-        return cnpjEcpf;
+        return cnpj;
     }
 
-    public void setCnpjEcpf(String cnpjEcpf) {
-        this.cnpjEcpf = cnpjEcpf;
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
     }
 
     public String getNome() {

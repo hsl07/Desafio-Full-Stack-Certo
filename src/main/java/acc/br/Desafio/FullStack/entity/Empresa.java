@@ -12,8 +12,11 @@ public class Empresa {
     private String nomeFantasia;
     @Column(name = "cep")
     private String cep;
-    @Column(name = "cnpj_em")
+    @Column(name = "cnpj_em",unique = true)
     private String cnpj;
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "empresa")
+    private Endereco endereco;
+
     public Empresa(){}
 
     public Empresa(String nomeFantasia, String cep, String cpnj) {
@@ -48,5 +51,9 @@ public class Empresa {
 
     public void setCnpj(String cnpj) {
         this.cnpj = cnpj;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
     }
 }
