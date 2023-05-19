@@ -26,10 +26,6 @@ public class Empresa {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getNomeFantasia() {
         return nomeFantasia;
     }
@@ -46,11 +42,11 @@ public class Empresa {
         this.cep = cep;
     }
 
-    public String getCpnj() {
+    public String getCnpj() {
         return cnpj;
     }
 
-    public void setCpnj(String cpnj) {
-        this.cnpj = cpnj;
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
     }
 }
