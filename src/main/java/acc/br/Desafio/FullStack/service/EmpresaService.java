@@ -2,7 +2,8 @@ package acc.br.Desafio.FullStack.service;
 
 import acc.br.Desafio.FullStack.consume.ApiViaCep;
 import acc.br.Desafio.FullStack.entity.Empresa;
-import acc.br.Desafio.FullStack.entity.Endereco;
+import acc.br.Desafio.FullStack.entity.EnderecoEmpresa;
+import acc.br.Desafio.FullStack.entity.EnderecoFonecedor;
 import acc.br.Desafio.FullStack.repository.EmpresaRespository;
 import acc.br.Desafio.FullStack.utils.ValidaCNPJ;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +21,23 @@ public class EmpresaService {
 
     public String saveEmpresa(Empresa empresa){
 
-        Endereco endereco = null;
+        EnderecoEmpresa enderecoEmpresa = null;
 
         ApiViaCep viaCep = new ApiViaCep();
 
         try {
-                endereco = viaCep.consultaCEP(empresa.getCep());
+                enderecoEmpresa = new EnderecoEmpresa(viaCep.consultaCEP(empresa.getCep()));
+
                 Boolean vlCNPJ = ValidaCNPJ.isCNPJ(empresa.getCnpj());
 
-                if (endereco!=null&&vlCNPJ){  //Se o Objeto endereco não é null e a variavel vlCNPJ é verdadeira
+                if (enderecoEmpresa !=null&&vlCNPJ){  //Se o Objeto enderecoFonecedor não é null e a variavel vlCNPJ é verdadeira
                        List<Empresa> emCPNJ = empresaRespository.consultaCNPJEmpresa(empresa.getCnpj());
 
                        if(emCPNJ.isEmpty()) { // Se o CNPJ não foi registrado no banco de dados, então ele pode ser cadastrado
 
                             Empresa empresa1 = empresa;
-                            endereco.setEmpresa(empresa);
-                            empresa1.setEndereco(endereco);
+                            enderecoEmpresa.setEmpresa(empresa);
+                            empresa1.setEndereco(enderecoEmpresa);
                             empresa1.setCnpj(ValidaCNPJ.imprimeCNPJ(empresa.getCnpj()));
                             empresaRespository.save(empresa1);
                             return "As informações da empresa foram salvas corretamentes";

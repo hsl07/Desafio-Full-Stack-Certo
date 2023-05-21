@@ -11,4 +11,7 @@ import java.util.List;
 @Repository
 public interface FornecedorRepository extends JpaRepository<Fornecedor,Long> {
 
+    @Query(nativeQuery = true,
+            value = "SELECT * FROM desafio.fornecedor f where f.cnpj = :cnpj")
+    List<Fornecedor> consultaCNPJFornecedor(String cnpj);
 }

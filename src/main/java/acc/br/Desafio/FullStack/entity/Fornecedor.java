@@ -2,6 +2,8 @@ package acc.br.Desafio.FullStack.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Fornecedor {
     @Id
@@ -16,14 +18,24 @@ public class Fornecedor {
     private String email;
     @Column(name = "cep", nullable = false)
     private String cep;
+    @OneToMany(mappedBy = "fornecedor")
+    private List<EmpresaFornecedor> empresas;
+
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "fornecedor")
+    private EnderecoFonecedor enderecoFonecedor;
 
     public Fornecedor(){}
 
-    public Fornecedor(String cnpjEcpf, String nome, String email, String cep) {
+    public Fornecedor(String cnpj, String nome, String email, String cep) {
         this.cnpj = cnpj;
         this.nome = nome;
         this.email = email;
         this.cep = cep;
+    }
+
+    public void addEmpresaFornecedor(EmpresaFornecedor empresaFornecedor){
+        empresaFornecedor.setFornecedor(this);
+        this.empresas.add(empresaFornecedor);
     }
 
     public long getId() {
@@ -61,5 +73,25 @@ public class Fornecedor {
 
     public void setCep(String cep) {
         this.cep = cep;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    public List<EmpresaFornecedor> getEmpresas() {
+        return empresas;
+    }
+
+    public void setEmpresas(List<EmpresaFornecedor> empresas) {
+        this.empresas = empresas;
+    }
+
+    public EnderecoFonecedor getEndereco() {
+        return enderecoFonecedor;
+    }
+
+    public void setEndereco(EnderecoFonecedor enderecoFonecedor) {
+        this.enderecoFonecedor = enderecoFonecedor;
     }
 }
