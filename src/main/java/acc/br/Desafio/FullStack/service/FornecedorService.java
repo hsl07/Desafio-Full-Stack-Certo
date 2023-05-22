@@ -1,12 +1,14 @@
 package acc.br.Desafio.FullStack.service;
 
 import acc.br.Desafio.FullStack.consume.ApiViaCep;
+import acc.br.Desafio.FullStack.dto.FornecedorDTO;
 import acc.br.Desafio.FullStack.entity.Empresa;
 import acc.br.Desafio.FullStack.entity.EmpresaFornecedor;
 import acc.br.Desafio.FullStack.entity.EnderecoFonecedor;
 import acc.br.Desafio.FullStack.entity.Fornecedor;
 import acc.br.Desafio.FullStack.repository.EmpresaFornecedorRepository;
 import acc.br.Desafio.FullStack.repository.EmpresaRespository;
+import acc.br.Desafio.FullStack.repository.EnderecoFornecedorRepository;
 import acc.br.Desafio.FullStack.repository.FornecedorRepository;
 import acc.br.Desafio.FullStack.utils.ValidaCNPJ;
 import org.slf4j.Logger;
@@ -28,6 +30,8 @@ public class FornecedorService {
     EmpresaRespository empresaRespository;
     @Autowired
     EmpresaFornecedorRepository empresaFornecedorRepository;
+    @Autowired
+    EnderecoFornecedorRepository enderecoFornecedorRepository;
 
     public String cadastraFornecedor(Fornecedor fornecedor, Long id){
 
@@ -40,19 +44,20 @@ public class FornecedorService {
 
             if(empresa.isPresent()){ // verifica se a empresa Existe
 
-                enderecoFonecedor = new EnderecoFonecedor(viaCep.consultaCEP(fornecedor.getCep())); // Consulta o EnderecoFonecedor pelo CEP //O erro está aqui
 
-                Boolean vlCNPJ = ValidaCNPJ.isCNPJ(fornecedor.getCnpj()); //Valida CNPJ
+                    enderecoFonecedor = new EnderecoFonecedor(viaCep.consultaCEP(fornecedor.getCep())); // Consulta o EnderecoFonecedor pelo CEP //O erro está aqui
 
-                if (enderecoFonecedor !=null&&vlCNPJ) {//Se o Objeto enderecoFonecedor não é null e a variavel vlCNPJ é verdadeira
+                    Boolean vlCNPJ = ValidaCNPJ.isCNPJ(fornecedor.getCnpj()); //Valida CNPJ
 
-                    String cnpj = ValidaCNPJ.imprimeCNPJ(fornecedor.getCnpj());
+                    if (enderecoFonecedor != null && vlCNPJ) {//Se o Objeto enderecoFonecedor não é null e a variavel vlCNPJ é verdadeira
 
-                    List<Fornecedor> emCPNJ = fornecedorRepository.consultaCNPJFornecedor(cnpj);
+                        String cnpj = ValidaCNPJ.imprimeCNPJ(fornecedor.getCnpj());
 
-                    if(emCPNJ.isEmpty()) { // Se o CNPJ não foi registrado no banco de dados, então ele pode ser cadastrado
+                        List<Fornecedor> emCPNJ = fornecedorRepository.consultaCNPJFornecedor(cnpj);
 
-                        Fornecedor fornecedor1 = fornecedor;
+                        if (emCPNJ.isEmpty()) { // Se o CNPJ não foi registrado no banco de dados, então ele pode ser cadastrado
+
+                            Fornecedor fornecedor1 = fornecedor;
 
 
                             Empresa empresa1 = new Empresa(empresa); // Cria a empresa existente em memoria
@@ -65,13 +70,13 @@ public class FornecedorService {
 
                             return "Tudo certo";
 
-                    }else {
-                        return "Cnpj existente";
-                    }
+                        } else {
+                            return "Cnpj existente";
+                        }
 
-                }else {
-                    return null;
-                }
+                    } else {
+                        return null;
+                    }
 
 
 
@@ -83,5 +88,88 @@ public class FornecedorService {
         throw new RuntimeException(e);
       }
     }
+
+    public String updateFornecedor(FornecedorDTO fornecedorDTO, Long id){
+       Fornecedor fornecedor = new Fornecedor(fornecedorDTO);
+
+        Optional<Fornecedor> fornecedor1 = fornecedorRepository.findById(id);
+       if (fornecedor1.isPresent()){
+
+
+
+
+           Fornecedor fornecedor2 = fornecedor1.get();
+
+           fornecedor2.setEmail(fornecedor.getEmail());
+
+           fornecedor2.setNome(fornecedor.getNome());
+
+
+
+           if(!fornecedor1.get().getCep().trim().equals(fornecedor.getCep())){
+               EnderecoFonecedor enderecoFonecedor = null;
+
+
+               ApiViaCep viaCep = new ApiViaCep();
+               try {
+                   enderecoFonecedor = new EnderecoFonecedor(viaCep.consultaCEP(fornecedor.getCep()));
+               } catch (IOException e) {
+                   throw new RuntimeException(e);
+               }
+
+               if(enderecoFonecedor!=null){
+                 EnderecoFonecedor enderecoFonecedor1 = enderecoFornecedorRepository.findByIdFornecedor(fornecedor2.getId());
+
+                 enderecoFonecedor1.setCep(enderecoFonecedor.getCep());
+                 enderecoFonecedor1.setBairro(enderecoFonecedor.getBairro());
+                 enderecoFonecedor1.setComplemento(enderecoFonecedor.getComplemento());
+                 enderecoFonecedor1.setLocalidade(enderecoFonecedor.getLocalidade());
+                 enderecoFonecedor1.setLogradouro(enderecoFonecedor.getLogradouro());
+                 enderecoFonecedor1.setUf(enderecoFonecedor.getUf());
+
+                  fornecedor2.setEndereco(enderecoFonecedor1);
+                  fornecedor2.setCep(fornecedor.getCep());
+                  enderecoFornecedorRepository.save(enderecoFonecedor1);
+              }
+
+           }
+
+          fornecedorRepository.save(fornecedor2);
+           return "Fornecedor Atualizado";
+
+       }else {
+           return null;
+       }
+
+
+    }
+
+
+    public Fornecedor getFornecedorbyID(Long id){
+        Optional<Fornecedor> fornecedor = fornecedorRepository.findById(id);
+            if (fornecedor.equals(null)){
+                return null;
+            }
+            Fornecedor fornecedor1 = new Fornecedor(fornecedor);
+            return fornecedor1;
+    }
+    public List<Fornecedor> getAll(){
+
+       List<Fornecedor>  fornecedors = fornecedorRepository.findAll();
+      if (fornecedors.isEmpty()){
+          return null;
+      }
+       return fornecedors;
+    }
+
+    public String deleteFornecedor(Long id){
+       Optional<Fornecedor> fornecedor = fornecedorRepository.findById(id);
+       if (fornecedor.isPresent()){
+           fornecedorRepository.deleteById(id);
+           return "Deletado com sucesso";
+       }
+       return "Não encontrado";
+    }
+
 
 }

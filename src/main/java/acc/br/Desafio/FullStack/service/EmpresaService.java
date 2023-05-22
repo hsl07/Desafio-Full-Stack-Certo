@@ -6,6 +6,8 @@ import acc.br.Desafio.FullStack.entity.EnderecoEmpresa;
 import acc.br.Desafio.FullStack.entity.EnderecoFonecedor;
 import acc.br.Desafio.FullStack.repository.EmpresaRespository;
 import acc.br.Desafio.FullStack.utils.ValidaCNPJ;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ public class EmpresaService {
     @Autowired
     EmpresaRespository empresaRespository;
 
+    private static Logger logger = LoggerFactory.getLogger(EmpresaService.class);
 
     public String saveEmpresa(Empresa empresa){
 
@@ -78,16 +81,38 @@ public class EmpresaService {
 
     }
 
-    public Empresa updateEm(Empresa empresa, Long id){
+    public Empresa updateEm(Empresa empresa, Long id) throws IOException {
+
         Optional<Empresa> empresa1 = empresaRespository.findById(id);
+        EnderecoEmpresa enderecoEmpresa = null;
+
         if(empresa1.isPresent()){
-            Empresa  empresa2 = empresa1.get();
-            empresa2.setCnpj(empresa.getCnpj());
+
+
+        Empresa  empresa2 = empresa1.get();
+        empresa2.setCnpj(empresa.getCnpj());
+
+
             empresa2.setNomeFantasia(empresa.getNomeFantasia());
-            empresa2.setCep(empresa.getCep());
+
+
+            if(!empresa1.get().getCep().equals(empresa.getCep())){
+
+                ApiViaCep viaCep = new ApiViaCep();
+                enderecoEmpresa = new EnderecoEmpresa(viaCep.consultaCEP(empresa.getCep()));
+
+                if(enderecoEmpresa!=null){
+                    empresaRespository.deleteEnderecoById(empresa1.get().getId());
+                    enderecoEmpresa.setEmpresa(empresa2);
+                    empresa2.setEndereco(enderecoEmpresa);
+                    empresa2.setCep(empresa.getCep());
+                }
+
+            }
 
             empresaRespository.save(empresa2);
-                return empresa2;
+            return empresa2;
+
         }else {
             return null;
         }

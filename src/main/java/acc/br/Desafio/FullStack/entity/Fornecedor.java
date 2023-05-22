@@ -1,8 +1,10 @@
 package acc.br.Desafio.FullStack.entity;
 
+import acc.br.Desafio.FullStack.dto.FornecedorDTO;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 public class Fornecedor {
@@ -32,6 +34,21 @@ public class Fornecedor {
         this.email = email;
         this.cep = cep;
     }
+
+    public Fornecedor(FornecedorDTO fornecedorDTO) {
+        this.cnpj = fornecedorDTO.getCnpj();
+        this.nome = fornecedorDTO.getNome();
+        this.email = fornecedorDTO.getEmail();
+        this.cep = fornecedorDTO.getCep();
+    }
+
+    public Fornecedor(Optional<Fornecedor> fornecedorDTO) {
+        this.cnpj = fornecedorDTO.get().getCnpj();
+        this.nome = fornecedorDTO.get().getNome();
+        this.email = fornecedorDTO.get().getEmail();
+        this.cep = fornecedorDTO.get().getCep();
+    }
+
 
     public void addEmpresaFornecedor(EmpresaFornecedor empresaFornecedor){
         empresaFornecedor.setFornecedor(this);
@@ -93,5 +110,15 @@ public class Fornecedor {
 
     public void setEndereco(EnderecoFonecedor enderecoFonecedor) {
         this.enderecoFonecedor = enderecoFonecedor;
+    }
+
+    @Override
+    public String toString() {
+        return "Fornecedor{" +
+                "cnpj='" + cnpj + '\'' +
+                ", nome='" + nome + '\'' +
+                ", email='" + email + '\'' +
+                ", cep='" + cep + '\'' +
+                '}';
     }
 }

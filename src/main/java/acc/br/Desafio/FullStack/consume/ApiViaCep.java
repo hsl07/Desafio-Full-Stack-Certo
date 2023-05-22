@@ -15,22 +15,22 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 public class ApiViaCep {
-    private static Logger logger = LoggerFactory.getLogger(ApiViaCep.class);
+   // private static Logger logger = LoggerFactory.getLogger(ApiViaCep.class);
     public EnderecoDTO consultaCEP (String cep) throws IOException {
-        logger.info("entrou no metodo");
+
         EnderecoDTO endereco = null;
 
         HttpGet request = new HttpGet("https://viacep.com.br/ws/"+cep+"/json/");
-        logger.info("Fez a consulta na api");
+
         try(CloseableHttpClient httpClient = HttpClientBuilder.create().disableRedirectHandling().build();
             CloseableHttpResponse response = httpClient.execute(request)) {
 
             HttpEntity entity = response.getEntity();
             if(entity !=null){
-                logger.info("entity não é nu");
+
                 String result = EntityUtils.toString(entity);
                Gson gson = new Gson();
-                logger.info(result);
+
                endereco = gson.fromJson(result, EnderecoDTO.class);
 
             }

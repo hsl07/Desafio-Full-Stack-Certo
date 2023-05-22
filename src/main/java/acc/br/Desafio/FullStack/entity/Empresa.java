@@ -1,5 +1,6 @@
 package acc.br.Desafio.FullStack.entity;
 
+import acc.br.Desafio.FullStack.dto.EmpresaDTO;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -38,6 +39,12 @@ public class Empresa {
         this.cep = cep;
         this.cnpj = cpnj;
     }
+    public Empresa(EmpresaDTO empresaDTO) {
+        this.nomeFantasia = empresaDTO.getNomeFantasia();
+        this.cep = empresaDTO.getCep();
+        this.cnpj = empresaDTO.getCnpj();
+    }
+
 
     public void addEmpresaFornecedor(EmpresaFornecedor empresaFornecedor){
         empresaFornecedor.setEmpresa(this);
@@ -78,5 +85,17 @@ public class Empresa {
 
     public EnderecoEmpresa getEndereco() {
         return enderecoEmpresa;
+    }
+
+    @Override
+    public String toString() {
+        return "Empresa{" +
+                "id=" + id +
+                ", nomeFantasia='" + nomeFantasia + '\'' +
+                ", cep='" + cep + '\'' +
+                ", cnpj='" + cnpj + '\'' +
+                ", enderecoEmpresa=" + enderecoEmpresa +
+                ", fornecedors=" + fornecedors +
+                '}';
     }
 }

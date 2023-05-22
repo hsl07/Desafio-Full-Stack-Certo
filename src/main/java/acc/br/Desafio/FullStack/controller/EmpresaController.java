@@ -4,17 +4,20 @@ import acc.br.Desafio.FullStack.dto.EmpresaDTO;
 import acc.br.Desafio.FullStack.entity.Empresa;
 import acc.br.Desafio.FullStack.repository.EmpresaRespository;
 import acc.br.Desafio.FullStack.service.EmpresaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/empresa")
 public class EmpresaController {
-
+    private static Logger logger = LoggerFactory.getLogger(EmpresaController.class);
     @Autowired
     EmpresaService empresaService;
 
@@ -49,8 +52,12 @@ public class EmpresaController {
         }
     }
     @PutMapping("/{id}")
-    public ResponseEntity updateEmpresa(@RequestBody Empresa empresa,@PathVariable Long id){
-        EmpresaDTO empresa2 = new EmpresaDTO(empresaService.updateEm(empresa,id));
+    public ResponseEntity updateEmpresa(@RequestBody EmpresaDTO empresaDTO,@PathVariable Long id) throws IOException {
+
+        Empresa empresa = new Empresa(empresaDTO);
+
+        Empresa empresa1 = empresaService.updateEm(empresa,id);
+        EmpresaDTO empresa2 = new EmpresaDTO(empresa1);
         if(empresa2==null){
             return ResponseEntity.badRequest().body("Empresa não encontrada");
         }else {
