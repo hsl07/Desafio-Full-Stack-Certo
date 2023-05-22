@@ -11,6 +11,8 @@ import acc.br.Desafio.FullStack.service.FornecedorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +35,7 @@ public class FornecedorController {
        if(retorno==null){
            return ResponseEntity.badRequest().body("Algo deu errado");
        }
-       if(retorno=="Cnpj existente"){
+       if(retorno.equals("Cnpj existente")){
            return ResponseEntity.badRequest().body("Cnpj existente");
        }
        return ResponseEntity.ok().body(retorno);
@@ -42,7 +44,7 @@ public class FornecedorController {
     @GetMapping
     public ResponseEntity test(){
        List<Fornecedor> fornecedors = fornecedorService.getAll();
-       if(fornecedors.equals(null)){
+       if(fornecedors == null){
            return ResponseEntity.badRequest().body("Consulta não execultada");
        }
 
@@ -75,5 +77,16 @@ public class FornecedorController {
         }
         return ResponseEntity.ok().body(retorn);
 
+    }
+    @GetMapping("/cnpj")
+    public Page<FornecedorDTO> buscarPorCNPJ(@RequestParam(defaultValue = "") String cnpj, Pageable pageable){
+      Page<FornecedorDTO> f = fornecedorService.buscaCNPJ(cnpj,pageable);
+    return f;
+    }
+
+    @GetMapping("/nome")
+    public Page<FornecedorDTO> buscarPorNome(@RequestParam(defaultValue = "") String nome, Pageable pageable){
+        Page<FornecedorDTO> f = fornecedorService.searchName(nome,pageable);
+        return f;
     }
 }

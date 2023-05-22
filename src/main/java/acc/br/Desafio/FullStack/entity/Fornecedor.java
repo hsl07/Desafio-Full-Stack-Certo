@@ -20,7 +20,7 @@ public class Fornecedor {
     private String email;
     @Column(name = "cep", nullable = false)
     private String cep;
-    @OneToMany(mappedBy = "fornecedor")
+    @OneToMany(mappedBy = "fornecedor",cascade = CascadeType.ALL)
     private List<EmpresaFornecedor> empresas;
 
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "fornecedor")

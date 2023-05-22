@@ -14,7 +14,7 @@ public class EmpresaFornecedor {
     @ManyToOne
     private Fornecedor fornecedor;
     @ManyToOne
-    private FornecedorPessoaFisica pessoaFisica;
+    private FornecedorPessoaFisica fornecedorPF;
 
     public EmpresaFornecedor() {
     }
@@ -23,12 +23,17 @@ public class EmpresaFornecedor {
         this.id = id;
         this.empresa = empresa;
         this.fornecedor = fornecedor;
-        this.pessoaFisica = pessoaFisica;
+        this.fornecedorPF = pessoaFisica;
     }
 
     public EmpresaFornecedor(Empresa empresa, Fornecedor fornecedor){
         this.empresa = empresa;
         this.fornecedor = fornecedor;
+    }
+
+    public EmpresaFornecedor(Empresa empresa, FornecedorPessoaFisica fornecedorPF){
+        this.empresa = empresa;
+        this.fornecedorPF = fornecedorPF;
     }
 
     public Long getId() {
@@ -56,11 +61,11 @@ public class EmpresaFornecedor {
     }
 
     public FornecedorPessoaFisica getPessoaFisica() {
-        return pessoaFisica;
+        return fornecedorPF;
     }
 
     public void setPessoaFisica(FornecedorPessoaFisica pessoaFisica) {
-        this.pessoaFisica = pessoaFisica;
+        this.fornecedorPF = pessoaFisica;
     }
 
     @Override
@@ -69,7 +74,7 @@ public class EmpresaFornecedor {
                 "id=" + id +
                 ", empresa=" + empresa +
                 ", fornecedor=" + fornecedor +
-                ", pessoaFisica=" + pessoaFisica +
+                ", pessoaFisica=" + fornecedorPF +
                 '}';
     }
 }

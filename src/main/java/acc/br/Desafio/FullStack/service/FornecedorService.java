@@ -2,10 +2,8 @@ package acc.br.Desafio.FullStack.service;
 
 import acc.br.Desafio.FullStack.consume.ApiViaCep;
 import acc.br.Desafio.FullStack.dto.FornecedorDTO;
-import acc.br.Desafio.FullStack.entity.Empresa;
-import acc.br.Desafio.FullStack.entity.EmpresaFornecedor;
-import acc.br.Desafio.FullStack.entity.EnderecoFonecedor;
-import acc.br.Desafio.FullStack.entity.Fornecedor;
+import acc.br.Desafio.FullStack.dto.FornecedorPFDTO;
+import acc.br.Desafio.FullStack.entity.*;
 import acc.br.Desafio.FullStack.repository.EmpresaFornecedorRepository;
 import acc.br.Desafio.FullStack.repository.EmpresaRespository;
 import acc.br.Desafio.FullStack.repository.EnderecoFornecedorRepository;
@@ -14,6 +12,8 @@ import acc.br.Desafio.FullStack.utils.ValidaCNPJ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -171,5 +171,22 @@ public class FornecedorService {
        return "Não encontrado";
     }
 
+    public Page<FornecedorDTO> buscaCNPJ(String cnpj, Pageable pageable){
+      Page<FornecedorDTO> fornecedorDTO = convertToDTO(fornecedorRepository.searchCnpj(cnpj,pageable));
+    return fornecedorDTO;
+    }
+
+    public Page<FornecedorDTO> searchName(String name, Pageable pageable){
+        Page<FornecedorDTO> fornecedorDTO = convertToDTO(fornecedorRepository.searchNome(name,pageable));
+        return fornecedorDTO;
+    }
+    private Page<FornecedorDTO> convertToDTO(Page<Fornecedor> fornecedorPFPage) {
+        return fornecedorPFPage.map(this::convertToDTO);
+    }
+
+    private FornecedorDTO convertToDTO(Fornecedor fornecedorPF) {
+        FornecedorDTO dto = new FornecedorDTO(fornecedorPF);
+        return dto;
+    }
 
 }

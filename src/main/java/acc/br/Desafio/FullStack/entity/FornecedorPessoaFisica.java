@@ -1,5 +1,7 @@
 package acc.br.Desafio.FullStack.entity;
 
+import acc.br.Desafio.FullStack.dto.FornecedorPFDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -22,14 +24,16 @@ public class FornecedorPessoaFisica {
     private String cep;
     @Column(name = "RG", nullable = false)
     private String RG;
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+  //  @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern ="dd/MM/yyyy")
     @Column(name = "Data_Nascimento", nullable = false)
     private LocalDate dataNascimento;
-    @OneToMany(mappedBy = "pessoaFisica")
-    private List<EmpresaFornecedor> empresas;
 
-  /*  @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "fornecedor_PF")
-    private EnderecoFonecedor endereco;*/
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "fornecedor_PF")
+    private EnderecoFornecedorPF endereco;
+
+    @OneToMany(mappedBy = "fornecedorPF",cascade = CascadeType.ALL)
+    private List<EmpresaFornecedor> empresas;
 
     public void addEmpresaFornecedor(EmpresaFornecedor empresaFornecedor){
         empresaFornecedor.setPessoaFisica(this);
@@ -46,6 +50,15 @@ public class FornecedorPessoaFisica {
         this.cep = cep;
         this.RG = RG;
         this.dataNascimento = dataNascimento;
+    }
+
+    public FornecedorPessoaFisica(FornecedorPFDTO fornecedorPFDTO){
+        this.cpf = fornecedorPFDTO.getCpf();
+        this.nome = fornecedorPFDTO.getNome();
+        this.email = fornecedorPFDTO.getEmail();
+        this.cep = fornecedorPFDTO.getCep();
+        this.RG = fornecedorPFDTO.getRG();
+        this.dataNascimento = fornecedorPFDTO.getDataNascimento();
     }
 
     public String getCpf() {
@@ -94,5 +107,21 @@ public class FornecedorPessoaFisica {
 
     public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public EnderecoFornecedorPF getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(EnderecoFornecedorPF endereco) {
+        this.endereco = endereco;
     }
 }

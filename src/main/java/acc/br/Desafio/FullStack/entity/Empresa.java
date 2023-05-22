@@ -20,7 +20,7 @@ public class Empresa {
     private String cnpj;
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "empresa")
     private EnderecoEmpresa enderecoEmpresa;
-    @OneToMany(mappedBy = "empresa")
+    @OneToMany(mappedBy = "empresa",cascade = CascadeType.ALL)
     private List<EmpresaFornecedor> fornecedors;
 
 
